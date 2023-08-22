@@ -27,6 +27,27 @@ class StudentManager(models.Manager):
 # Create your models here.
 
 
+class Employee(models.Model):
+    name = models.CharField(
+        max_length=30,
+        null=False,
+    )
+    salary = models.IntegerField(null=False,)
+    email = models.EmailField(null=False, unique=True)
+    EMPLOYEE_TYPE = [
+        ('full', 'Full Time'),
+        ('part', 'Part Time'),
+        ('intern', 'Internee')
+    ]
+    type = models.CharField(
+        null=True,
+        max_length=40,
+        choices=EMPLOYEE_TYPE,
+        default='full',
+    )
+    dob = models.DateField(null=True)
+
+
 class Student(models.Model):
     first_name = models.CharField(max_length=30, null=False)
     last_name = models.CharField(max_length=30, null=False)

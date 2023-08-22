@@ -1,10 +1,24 @@
 from django.db.models import Avg, Count, Q
-from django.shortcuts import render
+from django.shortcuts import render, redirect, loader
 from django.http import HttpResponse
 from .models import Student
 from .models import Book, Publisher, Author, Store
+from django.core.exceptions import PermissionDenied
+from django.views.decorators.http import require_http_methods
+from django.views import View
+from .forms import EmployeeForm
+from .models import Employee
+from django.forms import BaseFormSet
+from django.forms import formset_factory
+from .forms import EmployeeModelForm
+
 
 # Create your views here.
+
+
+@require_http_methods(['POST'])
+def decorator_check(request):
+    return HttpResponse('require_http_methods Decorator')
 
 
 def home(request):
@@ -57,3 +71,63 @@ def get_books(request):
         'book4': book4,
     }
     return HttpResponse(context)
+
+
+def response_error_handler(request, exception=None):
+    return HttpResponse("Response Error Occurred", status=403)
+
+
+def permission_denied_view(request):
+    return PermissionDenied
+
+
+class EmployeeFormView(View):
+
+    def post(self, request):
+        emp_form = EmployeeForm(request.POST)
+        if emp_form.is_valid():
+            employee = Employee(name=request.POST['name'], email=request.POST['email'], salary=request.POST['salary'])
+            employee.save()
+            return redirect('home')
+
+    def get(self, request):
+        emp_form = EmployeeForm()
+        template = loader.get_template('employee_form.html')
+        context = {
+            'form': emp_form,
+        }
+        return HttpResponse(template.render(context, request))
+
+
+class EmployeeFormSetView(View):
+
+    def get(self, request):
+        employee_form_set = formset_factory(EmployeeForm, absolute_max=2000)
+        data = {
+            "form-TOTAL_FORMS": "9",
+            "form-INITIAL_FORMS": "0",
+            "form-0-email": 'a@gmail.com',
+            "form-1-email": 'a@gmail.com',
+        }
+        form_set = employee_form_set(data)
+        print(len(form_set.forms))
+        print(form_set.absolute_max)
+        print(form_set.max_num)
+        print(form_set.is_valid())
+        for form in form_set:
+            print(form.as_table)
+        template = loader.get_template("form_set.html")
+        return HttpResponse(template.render({'form_set': form_set}, request))
+
+
+def edit_employee(request):
+    employee = Employee.objects.get(pk=1)
+    form = EmployeeModelForm(instance=employee)
+    template = loader.get_template("form_set.html")
+    if request.method == "POST":
+        pass
+    return HttpResponse(template.render({'form': form}, request))
+
+
+
+
