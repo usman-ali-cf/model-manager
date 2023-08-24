@@ -11,6 +11,7 @@ from .models import Employee
 from django.forms import BaseFormSet
 from django.forms import formset_factory
 from .forms import EmployeeModelForm
+from .decorator import wellcome_decorator
 
 
 # Create your views here.
@@ -21,7 +22,9 @@ def decorator_check(request):
     return HttpResponse('require_http_methods Decorator')
 
 
+@wellcome_decorator
 def home(request):
+    print("View Called")
     return HttpResponse("Home :)")
 
 
@@ -97,6 +100,12 @@ class EmployeeFormView(View):
             'form': emp_form,
         }
         return HttpResponse(template.render(context, request))
+
+    def dispatch(self, request, *args, **kwargs):
+        pass
+
+    def put(self, request):
+        pass
 
 
 class EmployeeFormSetView(View):
