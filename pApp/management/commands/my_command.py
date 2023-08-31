@@ -24,6 +24,3 @@ class Command(BaseCommand):
                 except ObjectDoesNotExist as e:
                     raise CommandError("Not Understandable :(")
 
-
-
-
