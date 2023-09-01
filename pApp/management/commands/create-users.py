@@ -23,7 +23,7 @@ class Command(BaseCommand):
                 user = User(username=username, password=password, last_name=lastname, first_name=firstname)
                 user.save()
                 date = datetime.now(timezone('Asia/Karachi'))
-                pst_time = DateTime(time=date)
+                pst_time = DateTime(time=date, format="PST")
                 pst_time.save()
             except ObjectDoesNotExist as e:
                 raise CommandError("Try running command as python manage.py create-user <int: numbers>")

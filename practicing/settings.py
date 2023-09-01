@@ -37,8 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pApp.apps.PappConfig',
+    # 'pApp.apps.PappConfig',
     'django_crontab',
+    'pApp'
 ]
 
 

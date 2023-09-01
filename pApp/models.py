@@ -16,3 +16,4 @@ class Employee(models.Model):
 
 class DateTime(models.Model):
     time = models.DateTimeField(null=True, )
+    format = models.CharField(null=True, default='PST', max_length=30)

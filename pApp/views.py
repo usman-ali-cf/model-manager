@@ -8,11 +8,15 @@ from .models import Employee
 from django.forms import BaseFormSet
 from django.forms import formset_factory
 from .decorator import wellcome_decorator
+from .models import DateTime
 
-import logging
-logger = logging.getLogger(__name__)
 
 # Create your views here.
 
+
 def home(request):
+    objects = DateTime.objects.all()
+    for obj in objects:
+        obj.format = 'PTC'
+        obj.save()
     return HttpResponse("Home")
