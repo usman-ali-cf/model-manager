@@ -1,37 +1,37 @@
-import logging
 from datetime import datetime
 from pytz import timezone
-from .models import DateTime as datemodel
-
-
-index = 0
-current_status = 'UTC'
 
 
 def my_cron_job():
-    global index, current_status
-    from .models import DateTime
-    if index < 100 and current_status == 'UTC':
-        date_objects = DateTime.objects.all().order_by('id')
-        objects = date_objects[index:index + 10]
-        index += 10
-        for object in objects:
-            date = datetime.now(timezone('UTC'))
-            object.time = date
-            object.format = "UTC"
-            object.save()
-    if index < 100 and current_status == 'PTC':
-        date_objects = DateTime.objects.all().order_by('id')
-        objects = date_objects[index:index + 10]
-        index += 10
-        for object in objects:
-            date = datetime.now(timezone('Asia/Karachi'))
-            object.time = date
-            object.format = "PTC"
-            object.save()
-    if index > 100:
-        index = 0
-        if current_status == "UTC":
-            current_status = "PTC"
+    from .models import DateTime, DateTimezone
+    date_timezone = DateTimezone.objects.first()
+
+    if date_timezone.zone == 'UTC':
+        all_object = DateTime.objects.filter(format="PST").order_by('time_id').first()
+        if all_object is not None:
+            all_objects = DateTime.objects.all().order_by('time_id')
+            index = all_object.time_id - 1
+            selected_objects = all_objects[index:index + 10]
+            for object in selected_objects:
+                date = datetime.now(timezone('UTC'))
+                object.time = date
+                object.format = "UTC"
+                object.save()
         else:
-            current_status = "UTC"
+            date_timezone.zone = "PST"
+            date_timezone.save()
+
+    if date_timezone.zone == 'PST':
+        all_object = DateTime.objects.filter(format="UTC").order_by('time_id').first()
+        if all_object is not None:
+            all_objects = DateTime.objects.all().order_by('time_id')
+            index = all_object.time_id - 1
+            selected_objects = all_objects[index:index + 10]
+            for object in selected_objects:
+                date = datetime.now(timezone('Asia/Karachi'))
+                object.time = date
+                object.format = "PST"
+                object.save()
+        else:
+            date_timezone.zone = "UTC"
+            date_timezone.save()

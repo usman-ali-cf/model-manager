@@ -9,6 +9,7 @@ from django.forms import BaseFormSet
 from django.forms import formset_factory
 from .decorator import wellcome_decorator
 from .models import DateTime
+from .models import DateTimezone
 
 
 # Create your views here.
@@ -16,7 +17,10 @@ from .models import DateTime
 
 def home(request):
     objects = DateTime.objects.all()
+    id = 1
     for obj in objects:
-        obj.format = 'PTC'
+        obj.format = 'PST'
+        obj.time_id = id
         obj.save()
+        id += 1
     return HttpResponse("Home")
