@@ -15,5 +15,10 @@ class Employee(models.Model):
 
 
 class DateTime(models.Model):
+    time_id = models.IntegerField(null=False, default=1)
     time = models.DateTimeField(null=True, )
     format = models.CharField(null=True, default='PST', max_length=30)
+
+
+class DateTimezone(models.Model):
+    zone = models.CharField(null=False, default="UTC", max_length=30)
